@@ -3,6 +3,7 @@ package ru.practicum.shareit.user;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.user.dto.UserDto;
 
 import java.util.List;
 
@@ -12,23 +13,24 @@ import java.util.List;
 @RequestMapping(path = "/users")
 public class UserController {
     private final UserService userService;
+
     @PostMapping
-    public User createUser(@RequestBody User user) {
+    public UserDto createUser(@RequestBody UserDto user) {
         return userService.createUser(user);
     }
 
     @PatchMapping("/{id}")
-    public User updateUser(@PathVariable long id, @RequestBody User user) {
+    public UserDto updateUser(@PathVariable long id, @RequestBody UserDto user) {
         return userService.updateUser(id, user);
     }
 
     @GetMapping("/{id}")
-    public User getUser(@PathVariable long id) {
+    public UserDto getUser(@PathVariable long id) {
         return userService.findUserById(id);
     }
 
     @GetMapping
-    public List<User> getUsers() {
+    public List<UserDto> getUsers() {
         return userService.getAllUsers();
     }
 

@@ -4,11 +4,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 import ru.practicum.shareit.exception.NotFoundException;
-import ru.practicum.shareit.exception.UniqueViolationException;
+import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.user.mapper.UserMapper;
+import ru.practicum.shareit.user.model.User;
 
 import javax.validation.Valid;
-import javax.validation.ValidationException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Validated
@@ -17,33 +19,31 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
 
     @Override
-    public User createUser(@Valid User user) {
-        User newUser = userRepository.addUser(user);
+    public UserDto createUser(@Valid UserDto user) {
+        User newUser = userRepository.addUser(UserMapper.toUser(user));
 
-        return newUser;
+        return UserMapper.toUserDto(newUser);
     }
 
     @Override
-    public User updateUser(long id, User user) {
-        User storedUser = findUserById(id);
+    public UserDto updateUser(long id, UserDto userDto) {
+        User storedUser = getUser(id);
 
-        user.setId(id);
-        return userRepository.updateUser(applyPatch(user, storedUser));
+        return UserMapper.toUserDto(userRepository.updateUser(applyPatch(userDto, storedUser)));
     }
 
     @Override
-    public User findUserById(long id) {
-        User user = userRepository.getUserById(id);
-        if (user == null) {
-            throw new NotFoundException(String.format("User with id %d doesn't exist", id));
-        }
+    public UserDto findUserById(long id) {
+        User user = getUser(id);
 
-        return user;
+        return UserMapper.toUserDto(user);
     }
 
     @Override
-    public List<User> getAllUsers() {
-        return userRepository.getUsers();
+    public List<UserDto> getAllUsers() {
+        return userRepository.getUsers().stream()
+                .map(UserMapper::toUserDto)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -51,7 +51,7 @@ public class UserServiceImpl implements UserService {
         userRepository.deleteUserById(id);
     }
 
-    private User applyPatch(User userPatch, User storedUser) {
+    private User applyPatch(UserDto userPatch, User storedUser) {
         String patchEmail = userPatch.getEmail();
         String patchName = userPatch.getName();
 
@@ -60,5 +60,14 @@ public class UserServiceImpl implements UserService {
                 .email(patchEmail != null ? patchEmail : storedUser.getEmail())
                 .name(patchName != null ? patchName : storedUser.getName())
                 .build();
+    }
+
+    private User getUser(long userId) {
+        User user = userRepository.getUserById(userId);
+        if (user == null) {
+            throw new NotFoundException(String.format("User with id %d doesn't exist", userId));
+        }
+
+        return user;
     }
 }

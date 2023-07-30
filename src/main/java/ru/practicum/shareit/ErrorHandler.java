@@ -5,6 +5,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import ru.practicum.shareit.exception.AccessDeniedException;
 import ru.practicum.shareit.exception.NotFoundException;
 
 import javax.validation.ConstraintViolationException;
@@ -23,9 +24,16 @@ public class ErrorHandler {
             ValidationException.class,
             MethodArgumentNotValidException.class
     })
-
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleValidationError(Exception e) {
+        return new ErrorResponse(e.getMessage());
+    }
+
+    @ExceptionHandler({
+            AccessDeniedException.class
+    })
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ErrorResponse handleAccessDeniedError(Exception e) {
         return new ErrorResponse(e.getMessage());
     }
 
