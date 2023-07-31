@@ -30,8 +30,7 @@ public class ItemServiceImpl implements ItemService {
             throw new NotFoundException("User for item doesn't exist: " + userId);
         }
 
-        Item item = ItemMapper.toItem(itemDto);
-        item.setOwner(user);
+        Item item = ItemMapper.toItem(itemDto, user);
 
         return ItemMapper.toItemDto(itemRepository.addItem(item));
     }

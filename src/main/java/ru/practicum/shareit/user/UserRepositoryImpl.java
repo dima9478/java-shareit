@@ -4,16 +4,12 @@ import org.springframework.stereotype.Component;
 import ru.practicum.shareit.exception.UniqueViolationException;
 import ru.practicum.shareit.user.model.User;
 
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
+import java.util.*;
 
 @Component
 public class UserRepositoryImpl implements UserRepository {
     private final Map<Long, User> users = new HashMap<>();
+    private final Set<String> emailUniqSet = new HashSet<>();
     private long currentId;
 
     @Override
@@ -22,15 +18,19 @@ public class UserRepositoryImpl implements UserRepository {
 
         user.setId(++currentId);
         users.put(user.getId(), user);
+        emailUniqSet.add(user.getEmail());
 
         return user;
     }
 
     @Override
     public User updateUser(User user) {
-        validate(user, u -> !u.getId().equals(user.getId()));
+        User oldUser = users.get(user.getId());
+        validateOnUpdate(user, oldUser);
 
         users.put(user.getId(), user);
+        emailUniqSet.add(user.getEmail());
+        emailUniqSet.remove(oldUser.getEmail());
 
         return user;
     }
@@ -42,28 +42,25 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public List<User> getUsers() {
-        return users.values().stream()
-                .sorted(Comparator.comparing(User::getId))
-                .collect(Collectors.toList());
+        return new ArrayList<>(users.values());
     }
 
 
     @Override
     public void deleteUserById(long id) {
+        String email = users.get(id).getEmail();
         users.remove(id);
+        emailUniqSet.remove(email);
     }
 
     private void validate(User user) {
-        if (users.values().stream()
-                .anyMatch(u -> u.getEmail().equals(user.getEmail()))) {
+        if (emailUniqSet.contains(user.getEmail())) {
             throw new UniqueViolationException(String.format("User with email %s already exists", user.getEmail()));
         }
     }
 
-    private void validate(User user, Predicate<User> filter) {
-        if (users.values().stream()
-                .filter(filter)
-                .anyMatch(u -> u.getEmail().equals(user.getEmail()))) {
+    private void validateOnUpdate(User user, User oldUser) {
+        if (!user.getEmail().equals(oldUser.getEmail()) && emailUniqSet.contains(user.getEmail())) {
             throw new UniqueViolationException(String.format("User with email %s already exists", user.getEmail()));
         }
     }
