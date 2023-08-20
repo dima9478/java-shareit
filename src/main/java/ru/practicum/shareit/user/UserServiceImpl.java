@@ -1,9 +1,12 @@
 package ru.practicum.shareit.user;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import ru.practicum.shareit.exception.NotFoundException;
+import ru.practicum.shareit.exception.UniqueViolationException;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.mapper.UserMapper;
 import ru.practicum.shareit.user.model.User;
@@ -18,20 +21,29 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
 
+    @Transactional
     @Override
     public UserDto createUser(@Valid UserDto user) {
-        User newUser = userRepository.addUser(UserMapper.toUser(user));
+
+        User newUser;
+        try {
+            newUser = userRepository.save(UserMapper.toUser(user));
+        } catch (DataIntegrityViolationException e) {
+            throw new UniqueViolationException("User already exists");
+        }
 
         return UserMapper.toUserDto(newUser);
     }
 
+    @Transactional
     @Override
     public UserDto updateUser(long id, UserDto userDto) {
         User storedUser = getUser(id);
 
-        return UserMapper.toUserDto(userRepository.updateUser(applyPatch(userDto, storedUser)));
+        return UserMapper.toUserDto(userRepository.save(applyPatch(userDto, storedUser)));
     }
 
+    @Transactional(readOnly = true)
     @Override
     public UserDto findUserById(long id) {
         User user = getUser(id);
@@ -39,16 +51,18 @@ public class UserServiceImpl implements UserService {
         return UserMapper.toUserDto(user);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<UserDto> getAllUsers() {
-        return userRepository.getUsers().stream()
+        return userRepository.findAll().stream()
                 .map(UserMapper::toUserDto)
                 .collect(Collectors.toList());
     }
 
     @Override
+    @Transactional
     public void deleteUserById(long id) {
-        userRepository.deleteUserById(id);
+        userRepository.deleteById(id);
     }
 
     private User applyPatch(UserDto userPatch, User storedUser) {
@@ -63,11 +77,7 @@ public class UserServiceImpl implements UserService {
     }
 
     private User getUser(long userId) {
-        User user = userRepository.getUserById(userId);
-        if (user == null) {
-            throw new NotFoundException(String.format("User with id %d doesn't exist", userId));
-        }
-
-        return user;
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException(String.format("User with id %d doesn't exist", userId)));
     }
 }

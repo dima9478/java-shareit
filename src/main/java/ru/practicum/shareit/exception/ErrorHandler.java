@@ -21,7 +21,10 @@ public class ErrorHandler {
     @ExceptionHandler({
             ConstraintViolationException.class,
             ValidationException.class,
-            MethodArgumentNotValidException.class
+            MethodArgumentNotValidException.class,
+            ObjectUnavailableException.class,
+            IllegalArgumentException.class,
+            BadRequestException.class
     })
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleValidationError(Exception e) {
@@ -33,6 +36,14 @@ public class ErrorHandler {
     })
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public ErrorResponse handleAccessDeniedError(Exception e) {
+        return new ErrorResponse(e.getMessage());
+    }
+
+    @ExceptionHandler({
+            UniqueViolationException.class
+    })
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ErrorResponse handleConflicts(Exception e) {
         return new ErrorResponse(e.getMessage());
     }
 
