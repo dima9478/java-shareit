@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS requests
     id           bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     description  text,
     requestor_id bigint NOT NULL REFERENCES users (id),
-    created      timestamp
+    created timestamp without time zone NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS items
@@ -26,8 +26,8 @@ CREATE TABLE IF NOT EXISTS items
 CREATE TABLE IF NOT EXISTS bookings
 (
     id         bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    start_date timestamp NOT NULL,
-    end_date   timestamp NOT NULL,
+    start_date timestamp without time zone NOT NULL,
+    end_date   timestamp without time zone NOT NULL,
     item_id    bigint    NOT NULL REFERENCES items (id),
     booker_id  bigint    NOT NULL REFERENCES users (id),
     status     varchar   NOT NULL
@@ -39,6 +39,6 @@ CREATE TABLE IF NOT EXISTS comments
     text      text   NOT NULL,
     item_id   bigint NOT NULL REFERENCES items (id),
     author_id bigint NOT NULL REFERENCES users (id),
-    created   timestamp
+    created timestamp without time zone NOT NULL
 );
 

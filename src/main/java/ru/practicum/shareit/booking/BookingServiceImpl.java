@@ -22,6 +22,7 @@ import javax.validation.ValidationException;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -78,12 +79,13 @@ public class BookingServiceImpl implements BookingService {
     @Transactional(readOnly = true)
     @Override
     public List<BookingDto> getBookingsByState(long userId, String state) {
+        BookingFilterState filterState = getFilterState(state);
         getBookingUser(userId);
         List<Booking> bookings;
         Sort sort = Sort.by(Sort.Direction.DESC, "start");
         LocalDateTime currentTime = LocalDateTime.now();
 
-        switch (getFilterState(state)) {
+        switch (filterState) {
             case ALL:
                 bookings = bookingRepository.findByBookerId(userId, sort);
                 break;
@@ -97,9 +99,14 @@ public class BookingServiceImpl implements BookingService {
                 bookings = bookingRepository.findByBookerIdAndStartIsAfter(userId, currentTime, sort);
                 break;
             case WAITING:
+                bookings = bookingRepository.findByBookerIdAndStatus(userId,
+                        BookingStatus.WAITING,
+                        sort);
+                break;
             case REJECTED:
-                BookingStatus status = BookingStatus.valueOf(state);
-                bookings = bookingRepository.findByBookerIdAndStatus(userId, status, sort);
+                bookings = bookingRepository.findByBookerIdAndStatusIn(userId,
+                        Set.of(BookingStatus.REJECTED, BookingStatus.CANCELLED),
+                        sort);
                 break;
             default:
                 bookings = Collections.emptyList();
@@ -112,12 +119,13 @@ public class BookingServiceImpl implements BookingService {
     @Transactional(readOnly = true)
     @Override
     public List<BookingDto> getOwnerBookingsByState(long userId, String state) {
+        BookingFilterState filterState = getFilterState(state);
         getBookingUser(userId);
         List<Booking> bookings;
         Sort sort = Sort.by(Sort.Direction.DESC, "start");
         LocalDateTime currentTime = LocalDateTime.now();
 
-        switch (getFilterState(state)) {
+        switch (filterState) {
             case ALL:
                 bookings = bookingRepository.findByItemOwnerId(userId, sort);
                 break;
@@ -131,9 +139,14 @@ public class BookingServiceImpl implements BookingService {
                 bookings = bookingRepository.findByItemOwnerIdAndStartIsAfter(userId, currentTime, sort);
                 break;
             case WAITING:
+                bookings = bookingRepository.findByItemOwnerIdAndStatus(userId,
+                        BookingStatus.WAITING,
+                        sort);
+                break;
             case REJECTED:
-                BookingStatus status = BookingStatus.valueOf(state);
-                bookings = bookingRepository.findByItemOwnerIdAndStatus(userId, status, sort);
+                bookings = bookingRepository.findByItemOwnerIdAndStatusIn(userId,
+                        Set.of(BookingStatus.CANCELLED, BookingStatus.REJECTED),
+                        sort);
                 break;
             default:
                 bookings = Collections.emptyList();

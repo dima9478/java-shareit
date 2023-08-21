@@ -10,10 +10,14 @@ import ru.practicum.shareit.booking.model.BookingStatus;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 public interface BookingRepository extends JpaRepository<Booking, Long> {
     @EntityGraph("Booking.eager")
     List<Booking> findByBookerIdAndStatus(Long bookerId, BookingStatus status, Sort sort);
+
+    @EntityGraph("Booking.eager")
+    List<Booking> findByBookerIdAndStatusIn(Long bookerId, Set<BookingStatus> status, Sort sort);
 
     @EntityGraph("Booking.eager")
     List<Booking> findByBookerId(Long bookerId, Sort sort);
@@ -33,6 +37,9 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     @EntityGraph("Booking.eager")
     List<Booking> findByItemOwnerIdAndStatus(Long ownerId, BookingStatus status, Sort sort);
+
+    @EntityGraph("Booking.eager")
+    List<Booking> findByItemOwnerIdAndStatusIn(Long ownerId, Set<BookingStatus> status, Sort sort);
 
     @EntityGraph("Booking.eager")
     List<Booking> findByItemOwnerId(Long ownerId, Sort sort);
