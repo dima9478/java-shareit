@@ -2,6 +2,7 @@ package ru.practicum.shareit.item;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
@@ -18,6 +19,10 @@ import ru.practicum.shareit.item.mapper.CommentMapper;
 import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.param.PaginationRequest;
+import ru.practicum.shareit.param.PaginationRequestConverter;
+import ru.practicum.shareit.request.ItemRequest;
+import ru.practicum.shareit.request.ItemRequestRepository;
 import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.user.model.User;
 
@@ -37,14 +42,19 @@ public class ItemServiceImpl implements ItemService {
     private final ItemRepository itemRepository;
     private final BookingRepository bookingRepository;
     private final CommentRepository commentRepository;
+    private final ItemRequestRepository requestRepository;
 
     @Transactional
     @Override
     public ItemDto addItem(long userId, @Valid ItemDto itemDto) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("User for item doesn't exist: " + userId));
-
-        Item item = ItemMapper.toItem(itemDto, user);
+        ItemRequest request = null;
+        if (itemDto.getRequestId() != null) {
+            request = requestRepository.findById(itemDto.getRequestId())
+                    .orElseThrow(() -> new NotFoundException("No request with id " + itemDto.getRequestId()));
+        }
+        Item item = ItemMapper.toItem(itemDto, user, request);
 
         return ItemMapper.toItemDto(itemRepository.save(item));
     }
@@ -82,8 +92,10 @@ public class ItemServiceImpl implements ItemService {
 
     @Transactional(readOnly = true)
     @Override
-    public List<GetItemDto> getItems(long userId) {
-        List<Item> items = itemRepository.findAllByOwnerIdIsOrderById(userId);
+    public List<GetItemDto> getItems(long userId, @Valid PaginationRequest pagRequest) {
+        List<Item> items = itemRepository.findAllByOwnerId(
+                userId,
+                PaginationRequestConverter.toPageable(pagRequest, Sort.by(Sort.Direction.ASC, "id")));
         List<Long> itemIds = items.stream().map(Item::getId).collect(Collectors.toList());
         LocalDateTime time = LocalDateTime.now();
         Map<Long, Booking> lastBookings = bookingRepository.findLastBookingOfItems(itemIds, time).stream()
@@ -103,12 +115,14 @@ public class ItemServiceImpl implements ItemService {
 
     @Transactional(readOnly = true)
     @Override
-    public List<ItemDto> searchItems(String text) {
+    public List<ItemDto> searchItems(String text, @Valid PaginationRequest pagRequest) {
         if (text.isBlank()) {
             return Collections.emptyList();
         }
 
-        return itemRepository.searchItems(text).stream()
+        return itemRepository.searchItems(
+                        text, PaginationRequestConverter.toPageable(pagRequest, Sort.by(Sort.Direction.ASC, "id"))
+                ).stream()
                 .map(ItemMapper::toItemDto)
                 .collect(Collectors.toList());
     }
