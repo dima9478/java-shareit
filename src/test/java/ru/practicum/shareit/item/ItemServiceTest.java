@@ -1,4 +1,4 @@
-package ru.practicum.shareit.service;
+package ru.practicum.shareit.item;
 
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,9 +18,6 @@ import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.exception.AccessDeniedException;
 import ru.practicum.shareit.exception.BadRequestException;
 import ru.practicum.shareit.exception.NotFoundException;
-import ru.practicum.shareit.item.CommentRepository;
-import ru.practicum.shareit.item.ItemRepository;
-import ru.practicum.shareit.item.ItemServiceImpl;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.CreateCommentDto;
 import ru.practicum.shareit.item.dto.GetItemDto;

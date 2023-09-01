@@ -1,4 +1,4 @@
-package ru.practicum.shareit.service;
+package ru.practicum.shareit.booking;
 
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
@@ -9,13 +9,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Pageable;
-import ru.practicum.shareit.booking.BookingRepository;
-import ru.practicum.shareit.booking.BookingServiceImpl;
 import ru.practicum.shareit.booking.dto.BookingCreateDto;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.exception.NotFoundException;
+import ru.practicum.shareit.exception.ObjectUnavailableException;
 import ru.practicum.shareit.item.ItemRepository;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.param.PaginationRequest;
@@ -99,6 +98,15 @@ public class BookingServiceTest {
 
         assertThat(bookingDto.getId(), Matchers.equalTo(1L));
         assertThat(bookingDto.getBooker().getName(), Matchers.equalTo("name2"));
+    }
+
+    @Test
+    void addBooking_whenItemUnavailable_thenThrow() {
+        BookingCreateDto dto = new BookingCreateDto(1L, LocalDateTime.now().plusHours(12), LocalDateTime.now());
+        when(itemRepository.findById(1L)).thenReturn(Optional.of(item.toBuilder().available(false).build()));
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+
+        assertThrows(ObjectUnavailableException.class, () -> service.addBooking(dto, 1L));
     }
 
     @Test

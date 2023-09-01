@@ -1,4 +1,4 @@
-package ru.practicum.shareit.service;
+package ru.practicum.shareit.request;
 
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
@@ -11,8 +11,6 @@ import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.item.ItemRepository;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.param.PaginationRequest;
-import ru.practicum.shareit.request.ItemRequestRepository;
-import ru.practicum.shareit.request.ItemRequestServiceImpl;
 import ru.practicum.shareit.request.dto.CreateRequestDto;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.model.ItemRequest;

@@ -1,4 +1,4 @@
-package ru.practicum.shareit.repository;
+package ru.practicum.shareit.booking;
 
 import lombok.AllArgsConstructor;
 import org.junit.jupiter.api.BeforeEach;
@@ -8,7 +8,6 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.shareit.booking.BookingRepository;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.item.ItemRepository;

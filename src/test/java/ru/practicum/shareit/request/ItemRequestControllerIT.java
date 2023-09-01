@@ -1,4 +1,4 @@
-package ru.practicum.shareit.controller;
+package ru.practicum.shareit.request;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
@@ -11,8 +11,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.param.PaginationRequest;
-import ru.practicum.shareit.request.ItemRequestController;
-import ru.practicum.shareit.request.ItemRequestService;
 import ru.practicum.shareit.request.dto.CreateRequestDto;
 import ru.practicum.shareit.request.dto.GetItemRequestItemDto;
 import ru.practicum.shareit.request.dto.ItemRequestDto;

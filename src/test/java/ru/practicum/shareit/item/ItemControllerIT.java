@@ -1,4 +1,4 @@
-package ru.practicum.shareit.controller;
+package ru.practicum.shareit.item;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
@@ -12,8 +12,6 @@ import ru.practicum.shareit.booking.dto.ItemBookingDto;
 import ru.practicum.shareit.exception.AccessDeniedException;
 import ru.practicum.shareit.exception.BadRequestException;
 import ru.practicum.shareit.exception.NotFoundException;
-import ru.practicum.shareit.item.ItemController;
-import ru.practicum.shareit.item.ItemService;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.CreateCommentDto;
 import ru.practicum.shareit.item.dto.GetItemDto;
