@@ -171,7 +171,7 @@ public class BookingServiceTest {
         when(userRepository.findById(1L)).thenReturn(Optional.empty());
 
         assertThrows(NotFoundException.class,
-                () -> service.getBookingsByState(1L, "CURRENT", new PaginationRequest(0, 5)));
+                () -> service.getBookingsByState(1L, BookingFilterState.CURRENT.name(), new PaginationRequest(0, 5)));
     }
 
     @Test
@@ -190,21 +190,21 @@ public class BookingServiceTest {
     void getBookingsByState_whenByTime() {
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
 
-        service.getBookingsByState(1L, "CURRENT", new PaginationRequest(0, 5));
+        service.getBookingsByState(1L, BookingFilterState.CURRENT.name(), new PaginationRequest(0, 5));
 
         verify(bookingRepository, times(1))
                 .findByBookerIdCurrent(anyLong(), any(LocalDateTime.class), any(Pageable.class));
 
         ///////
 
-        service.getBookingsByState(1L, "PAST", new PaginationRequest(0, 5));
+        service.getBookingsByState(1L, BookingFilterState.PAST.name(), new PaginationRequest(0, 5));
 
         verify(bookingRepository, times(1))
                 .findByBookerIdAndEndIsBefore(anyLong(), any(LocalDateTime.class), any(Pageable.class));
 
         ///////
 
-        service.getBookingsByState(1L, "FUTURE", new PaginationRequest(0, 5));
+        service.getBookingsByState(1L, BookingFilterState.FUTURE.name(), new PaginationRequest(0, 5));
 
         verify(bookingRepository, times(1))
                 .findByBookerIdAndStartIsAfter(anyLong(), any(LocalDateTime.class), any(Pageable.class));
@@ -215,7 +215,7 @@ public class BookingServiceTest {
         ArgumentCaptor<BookingStatus> statusCaptor = forClass(BookingStatus.class);
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
 
-        service.getBookingsByState(1L, "WAITING", new PaginationRequest(0, 5));
+        service.getBookingsByState(1L, BookingFilterState.WAITING.name(), new PaginationRequest(0, 5));
 
         verify(bookingRepository, times(1)).findByBookerIdAndStatus(anyLong(),
                 statusCaptor.capture(),
@@ -234,7 +234,7 @@ public class BookingServiceTest {
         when(userRepository.findById(1L)).thenReturn(Optional.empty());
 
         assertThrows(NotFoundException.class,
-                () -> service.getOwnerBookingsByState(1L, "CURRENT", new PaginationRequest(0, 5)));
+                () -> service.getOwnerBookingsByState(1L, BookingFilterState.CURRENT.name(), new PaginationRequest(0, 5)));
     }
 
     @Test
@@ -243,7 +243,7 @@ public class BookingServiceTest {
         when(bookingRepository.findByItemOwnerId(anyLong(), any(Pageable.class)))
                 .thenReturn(List.of(booking));
 
-        List<BookingDto> bookings = service.getOwnerBookingsByState(1L, "ALL", new PaginationRequest(0, 5));
+        List<BookingDto> bookings = service.getOwnerBookingsByState(1L, BookingFilterState.ALL.name(), new PaginationRequest(0, 5));
 
         verify(bookingRepository, times(1)).findByItemOwnerId(anyLong(), any(Pageable.class));
         assertThat(bookings.get(0).getItem().getDescription(), Matchers.equalTo("desc"));
@@ -253,21 +253,21 @@ public class BookingServiceTest {
     void getOwnerBookingsByState_whenByTime() {
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
 
-        service.getOwnerBookingsByState(1L, "CURRENT", new PaginationRequest(0, 5));
+        service.getOwnerBookingsByState(1L, BookingFilterState.CURRENT.name(), new PaginationRequest(0, 5));
 
         verify(bookingRepository, times(1))
                 .findByItemOwnerIdCurrent(anyLong(), any(LocalDateTime.class), any(Pageable.class));
 
         ///////
 
-        service.getOwnerBookingsByState(1L, "PAST", new PaginationRequest(0, 5));
+        service.getOwnerBookingsByState(1L, BookingFilterState.PAST.name(), new PaginationRequest(0, 5));
 
         verify(bookingRepository, times(1))
                 .findByItemOwnerIdAndEndIsBefore(anyLong(), any(LocalDateTime.class), any(Pageable.class));
 
         ///////
 
-        service.getOwnerBookingsByState(1L, "FUTURE", new PaginationRequest(0, 5));
+        service.getOwnerBookingsByState(1L, BookingFilterState.FUTURE.name(), new PaginationRequest(0, 5));
 
         verify(bookingRepository, times(1))
                 .findByItemOwnerIdAndStartIsAfter(anyLong(), any(LocalDateTime.class), any(Pageable.class));
@@ -278,7 +278,7 @@ public class BookingServiceTest {
         ArgumentCaptor<BookingStatus> statusCaptor = forClass(BookingStatus.class);
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
 
-        service.getOwnerBookingsByState(1L, "WAITING", new PaginationRequest(0, 5));
+        service.getOwnerBookingsByState(1L, BookingFilterState.WAITING.name(), new PaginationRequest(0, 5));
 
         verify(bookingRepository, times(1)).findByItemOwnerIdAndStatus(anyLong(),
                 statusCaptor.capture(),

@@ -70,17 +70,17 @@ public class BookingControllerTest {
 
     @Test
     void getBookingByState() {
-        when(service.getBookingsByState(1L, "CURRENT", new PaginationRequest(0, 10)))
+        when(service.getBookingsByState(1L, BookingFilterState.CURRENT.name(), new PaginationRequest(0, 10)))
                 .thenReturn(List.of(dto));
 
-        assertThat(controller.getBookingByState(1L, "CURRENT", 0, 10), equalTo(List.of(dto)));
+        assertThat(controller.getBookingByState(1L, BookingFilterState.CURRENT.name(), 0, 10), equalTo(List.of(dto)));
     }
 
     @Test
     void getOwnerBookingByState() {
-        when(service.getOwnerBookingsByState(1L, "CURRENT", new PaginationRequest(0, 10)))
+        when(service.getOwnerBookingsByState(1L, BookingFilterState.CURRENT.name(), new PaginationRequest(0, 10)))
                 .thenReturn(List.of(dto));
 
-        assertThat(controller.getOwnerBookingByState(1L, "CURRENT", 0, 10), equalTo(List.of(dto)));
+        assertThat(controller.getOwnerBookingByState(1L, BookingFilterState.CURRENT.name(), 0, 10), equalTo(List.of(dto)));
     }
 }

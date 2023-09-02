@@ -7,6 +7,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.item.ItemRepository;
 import ru.practicum.shareit.item.model.Item;
@@ -85,7 +86,8 @@ public class ItemRequestServiceTest {
     void getUserRequests_whenSuccessful_thenReturnDtoWithItemsList() {
         when(userRepository.findById(2L)).thenReturn(Optional.of(user2));
         when(itemRepository.findAllByRequestIdIn(any(Set.class))).thenReturn(List.of(item1));
-        when(requestRepository.findAllByRequestorIdOrderByCreatedDesc(2L)).thenReturn(List.of(request));
+        when(requestRepository.findAllByRequestorId(2L, Sort.by(Sort.Direction.DESC, "created")))
+                .thenReturn(List.of(request));
 
         List<ItemRequestDto> requests = service.getUserRequests(2L);
 

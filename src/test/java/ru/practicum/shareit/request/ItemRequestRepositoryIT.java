@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.item.ItemRepository;
@@ -76,8 +77,11 @@ public class ItemRequestRepositoryIT {
     }
 
     @Test
-    void findAllByRequestorIdOrderByCreatedDesc() {
-        List<ItemRequest> requests = requestRepository.findAllByRequestorIdOrderByCreatedDesc(2L);
+    void findAllByRequestorId() {
+        List<ItemRequest> requests = requestRepository.findAllByRequestorId(
+                2L,
+                Sort.by(Sort.Direction.DESC, "created")
+        );
 
         assertThat(requests.size(), equalTo(2));
         assertThat(requests.get(0).getId(), equalTo(3L));

@@ -44,7 +44,10 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     @Override
     public List<ItemRequestDto> getUserRequests(long userId) {
         getUser(userId);
-        List<ItemRequest> requests = requestRepository.findAllByRequestorIdOrderByCreatedDesc(userId);
+        List<ItemRequest> requests = requestRepository.findAllByRequestorId(
+                userId,
+                Sort.by(Sort.Direction.DESC, "created")
+        );
 
         return makeItemRequestDtoList(requests);
     }

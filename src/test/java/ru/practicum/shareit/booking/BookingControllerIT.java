@@ -100,7 +100,7 @@ public class BookingControllerIT {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is(1L), Long.class))
-                .andExpect(jsonPath("$.status", is("APPROVED")))
+                .andExpect(jsonPath("$.status", is(BookingStatus.APPROVED.name())))
                 .andExpect(jsonPath("$.item.name", is("name")))
                 .andExpect(jsonPath("$.booker.name", is("uname")));
     }
@@ -139,7 +139,7 @@ public class BookingControllerIT {
                         .header(userHeader, 2L))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is(1L), Long.class))
-                .andExpect(jsonPath("$.status", is("APPROVED")))
+                .andExpect(jsonPath("$.status", is(BookingStatus.APPROVED.name())))
                 .andExpect(jsonPath("$.item.name", is("name")))
                 .andExpect(jsonPath("$.booker.name", is("uname")));
     }
@@ -166,7 +166,7 @@ public class BookingControllerIT {
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(jsonPath("$.id", is(1L), Long.class))
-                .andExpect(jsonPath("$.status", is("APPROVED")))
+                .andExpect(jsonPath("$.status", is(BookingStatus.APPROVED.name())))
                 .andExpect(jsonPath("$.item.name", is("name")))
                 .andExpect(jsonPath("$.booker.name", is("uname")));
     }
@@ -174,7 +174,7 @@ public class BookingControllerIT {
     @SneakyThrows
     @Test
     void getBookingByState_whenIllegalArgument_thenReturn400() {
-        when(service.getBookingsByState(1L, "ALL", new PaginationRequest(0, 10)))
+        when(service.getBookingsByState(1L, BookingFilterState.ALL.name(), new PaginationRequest(0, 10)))
                 .thenThrow(IllegalArgumentException.class);
 
         mvc.perform(get("/bookings")
@@ -186,7 +186,7 @@ public class BookingControllerIT {
     @SneakyThrows
     @Test
     void getBookingByState_whenSuccessful_thenReturnDtoList() {
-        when(service.getBookingsByState(1L, "CURRENT", new PaginationRequest(0, 2)))
+        when(service.getBookingsByState(1L, BookingFilterState.CURRENT.name(), new PaginationRequest(0, 2)))
                 .thenReturn(List.of(dto));
 
         mvc.perform(get("/bookings?state=CURRENT&from=0&size=2")
@@ -195,7 +195,7 @@ public class BookingControllerIT {
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(jsonPath("$[0].id", is(1L), Long.class))
-                .andExpect(jsonPath("$[0].status", is("APPROVED")))
+                .andExpect(jsonPath("$[0].status", is(BookingStatus.APPROVED.name())))
                 .andExpect(jsonPath("$[0].item.name", is("name")))
                 .andExpect(jsonPath("$[0].booker.name", is("uname")));
     }
@@ -203,7 +203,7 @@ public class BookingControllerIT {
     @SneakyThrows
     @Test
     void getOwnerBookingByState_whenIllegalArgument_thenReturn400() {
-        when(service.getOwnerBookingsByState(1L, "ALL", new PaginationRequest(0, 10)))
+        when(service.getOwnerBookingsByState(1L, BookingFilterState.ALL.name(), new PaginationRequest(0, 10)))
                 .thenThrow(IllegalArgumentException.class);
 
         mvc.perform(get("/bookings/owner")
@@ -215,7 +215,7 @@ public class BookingControllerIT {
     @SneakyThrows
     @Test
     void getOwnerBookingByState_whenSuccessful_thenReturnDtoList() {
-        when(service.getOwnerBookingsByState(1L, "CURRENT", new PaginationRequest(0, 2)))
+        when(service.getOwnerBookingsByState(1L, BookingFilterState.CURRENT.name(), new PaginationRequest(0, 2)))
                 .thenReturn(List.of(dto));
 
         mvc.perform(get("/bookings/owner?state=CURRENT&from=0&size=2")
@@ -224,7 +224,7 @@ public class BookingControllerIT {
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(jsonPath("$[0].id", is(1L), Long.class))
-                .andExpect(jsonPath("$[0].status", is("APPROVED")))
+                .andExpect(jsonPath("$[0].status", is(BookingStatus.APPROVED.name())))
                 .andExpect(jsonPath("$[0].item.name", is("name")))
                 .andExpect(jsonPath("$[0].booker.name", is("uname")));
     }
