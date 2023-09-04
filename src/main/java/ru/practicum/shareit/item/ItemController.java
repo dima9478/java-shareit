@@ -6,6 +6,7 @@ import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.CreateCommentDto;
 import ru.practicum.shareit.item.dto.GetItemDto;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.param.PaginationRequest;
 
 import java.util.List;
 
@@ -29,8 +30,10 @@ public class ItemController {
     }
 
     @GetMapping
-    public List<GetItemDto> getUserItems(@RequestHeader("X-Sharer-User-Id") long userId) {
-        return itemService.getItems(userId);
+    public List<GetItemDto> getUserItems(@RequestHeader("X-Sharer-User-Id") long userId,
+                                         @RequestParam(defaultValue = "0") int from,
+                                         @RequestParam(defaultValue = "10") int size) {
+        return itemService.getItems(userId, new PaginationRequest(from, size));
     }
 
     @PatchMapping("/{id}")
@@ -41,8 +44,10 @@ public class ItemController {
     }
 
     @GetMapping("/search")
-    public List<ItemDto> searchForItems(@RequestParam String text) {
-        return itemService.searchItems(text);
+    public List<ItemDto> searchForItems(@RequestParam String text,
+                                        @RequestParam(defaultValue = "0") int from,
+                                        @RequestParam(defaultValue = "10") int size) {
+        return itemService.searchItems(text, new PaginationRequest(from, size));
     }
 
     @PostMapping("/{itemId}/comment")
