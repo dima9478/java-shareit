@@ -7,9 +7,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ru.practicum.shareit.exception.dto.ErrorResponse;
 
-import javax.validation.ConstraintViolationException;
-import javax.validation.ValidationException;
-
 @RestControllerAdvice
 public class ErrorHandler {
     @ExceptionHandler
@@ -19,8 +16,6 @@ public class ErrorHandler {
     }
 
     @ExceptionHandler({
-            ConstraintViolationException.class,
-            ValidationException.class,
             MethodArgumentNotValidException.class,
             ObjectUnavailableException.class,
             IllegalArgumentException.class,

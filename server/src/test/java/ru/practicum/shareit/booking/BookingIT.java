@@ -25,40 +25,40 @@ public class BookingIT extends ShareItTests {
 
     @Test
     void getBookingsByState() {
-        List<BookingDto> bookings = bookingService.getBookingsByState(2L, "CURRENT", new PaginationRequest(0, 5));
+        List<BookingDto> bookings = bookingService.getBookingsByState(2L, BookingFilterState.CURRENT, new PaginationRequest(0, 5));
 
         assertThat(bookings.size(), equalTo(1));
         assertThat(bookings.get(0).getId(), equalTo(3L));
 
         ///
 
-        bookings = bookingService.getBookingsByState(2L, "WAITING", new PaginationRequest(0, 5));
+        bookings = bookingService.getBookingsByState(2L, BookingFilterState.WAITING, new PaginationRequest(0, 5));
         assertThat(bookings.size(), equalTo(1));
         assertThat(bookings.get(0).getId(), equalTo(4L));
 
         ///
 
-        bookings = bookingService.getBookingsByState(1L, "REJECTED", new PaginationRequest(0, 5));
+        bookings = bookingService.getBookingsByState(1L, BookingFilterState.REJECTED, new PaginationRequest(0, 5));
         assertThat(bookings.size(), equalTo(1));
         assertThat(bookings.get(0).getId(), equalTo(2L));
     }
 
     @Test
     void getOwnerBookingsByState() {
-        List<BookingDto> bookings = bookingService.getOwnerBookingsByState(1L, "CURRENT", new PaginationRequest(0, 5));
+        List<BookingDto> bookings = bookingService.getOwnerBookingsByState(1L, BookingFilterState.CURRENT, new PaginationRequest(0, 5));
 
         assertThat(bookings.size(), equalTo(1));
         assertThat(bookings.get(0).getId(), equalTo(3L));
 
         ///
 
-        bookings = bookingService.getOwnerBookingsByState(1L, "WAITING", new PaginationRequest(0, 5));
+        bookings = bookingService.getOwnerBookingsByState(1L, BookingFilterState.WAITING, new PaginationRequest(0, 5));
         assertThat(bookings.size(), equalTo(1));
         assertThat(bookings.get(0).getId(), equalTo(4L));
 
         ///
 
-        bookings = bookingService.getOwnerBookingsByState(2L, "REJECTED", new PaginationRequest(0, 5));
+        bookings = bookingService.getOwnerBookingsByState(2L, BookingFilterState.REJECTED, new PaginationRequest(0, 5));
         assertThat(bookings.size(), equalTo(1));
         assertThat(bookings.get(0).getId(), equalTo(2L));
     }

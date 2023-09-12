@@ -16,7 +16,6 @@ import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.param.PaginationRequest;
 import ru.practicum.shareit.user.dto.UserDto;
 
-import javax.validation.ValidationException;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -67,22 +66,6 @@ public class BookingControllerIT {
                         .content(mapper.writeValueAsString(bookingCreateDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
-    }
-
-    @SneakyThrows
-    @Test
-    void addBooking_whenValidationException_thenReturn400() {
-        BookingCreateDto bookingCreateDto = new BookingCreateDto(1L, LocalDateTime.now().plusHours(12), LocalDateTime.now());
-        when(service.addBooking(
-                bookingCreateDto,
-                1L)).thenThrow(ValidationException.class);
-
-        mvc.perform(post("/bookings")
-                        .accept(MediaType.APPLICATION_JSON)
-                        .header(userHeader, 1L)
-                        .content(mapper.writeValueAsString(bookingCreateDto))
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
     }
 
     @SneakyThrows
@@ -174,7 +157,7 @@ public class BookingControllerIT {
     @SneakyThrows
     @Test
     void getBookingByState_whenIllegalArgument_thenReturn400() {
-        when(service.getBookingsByState(1L, BookingFilterState.ALL.name(), new PaginationRequest(0, 10)))
+        when(service.getBookingsByState(1L, BookingFilterState.ALL, new PaginationRequest(0, 10)))
                 .thenThrow(IllegalArgumentException.class);
 
         mvc.perform(get("/bookings")
@@ -186,7 +169,7 @@ public class BookingControllerIT {
     @SneakyThrows
     @Test
     void getBookingByState_whenSuccessful_thenReturnDtoList() {
-        when(service.getBookingsByState(1L, BookingFilterState.CURRENT.name(), new PaginationRequest(0, 2)))
+        when(service.getBookingsByState(1L, BookingFilterState.CURRENT, new PaginationRequest(0, 2)))
                 .thenReturn(List.of(dto));
 
         mvc.perform(get("/bookings?state=CURRENT&from=0&size=2")
@@ -203,7 +186,7 @@ public class BookingControllerIT {
     @SneakyThrows
     @Test
     void getOwnerBookingByState_whenIllegalArgument_thenReturn400() {
-        when(service.getOwnerBookingsByState(1L, BookingFilterState.ALL.name(), new PaginationRequest(0, 10)))
+        when(service.getOwnerBookingsByState(1L, BookingFilterState.ALL, new PaginationRequest(0, 10)))
                 .thenThrow(IllegalArgumentException.class);
 
         mvc.perform(get("/bookings/owner")
@@ -215,7 +198,7 @@ public class BookingControllerIT {
     @SneakyThrows
     @Test
     void getOwnerBookingByState_whenSuccessful_thenReturnDtoList() {
-        when(service.getOwnerBookingsByState(1L, BookingFilterState.CURRENT.name(), new PaginationRequest(0, 2)))
+        when(service.getOwnerBookingsByState(1L, BookingFilterState.CURRENT, new PaginationRequest(0, 2)))
                 .thenReturn(List.of(dto));
 
         mvc.perform(get("/bookings/owner?state=CURRENT&from=0&size=2")

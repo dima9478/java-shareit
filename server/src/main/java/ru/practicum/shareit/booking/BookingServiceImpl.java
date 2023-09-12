@@ -78,8 +78,9 @@ public class BookingServiceImpl implements BookingService {
 
     @Transactional(readOnly = true)
     @Override
-    public List<BookingDto> getBookingsByState(long userId, String state, PaginationRequest pagRequest) {
-        BookingFilterState filterState = BookingFilterState.valueOf(state);
+    public List<BookingDto> getBookingsByState(long userId,
+                                               BookingFilterState filterState,
+                                               PaginationRequest pagRequest) {
         getBookingUser(userId);
         List<Booking> bookings;
         Pageable pageable = PaginationRequestConverter.toPageable(pagRequest, Sort.by(Sort.Direction.DESC, "start"));
@@ -118,8 +119,9 @@ public class BookingServiceImpl implements BookingService {
 
     @Transactional(readOnly = true)
     @Override
-    public List<BookingDto> getOwnerBookingsByState(long userId, String state, PaginationRequest pagRequest) {
-        BookingFilterState filterState = BookingFilterState.valueOf(state);
+    public List<BookingDto> getOwnerBookingsByState(long userId,
+                                                    BookingFilterState filterState,
+                                                    PaginationRequest pagRequest) {
         getBookingUser(userId);
         List<Booking> bookings;
         Pageable pageable = PaginationRequestConverter.toPageable(pagRequest, Sort.by(Sort.Direction.DESC, "start"));

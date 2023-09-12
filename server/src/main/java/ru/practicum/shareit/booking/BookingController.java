@@ -36,7 +36,7 @@ public class BookingController {
 
     @GetMapping
     List<BookingDto> getBookingByState(@RequestHeader("X-Sharer-User-Id") long userId,
-                                       @RequestParam(required = false, defaultValue = "ALL") String state,
+                                       @RequestParam(required = false, defaultValue = "ALL") BookingFilterState state,
                                        @RequestParam(defaultValue = "0") int from,
                                        @RequestParam(defaultValue = "10") int size) {
         return bookingService.getBookingsByState(userId, state, new PaginationRequest(from, size));
@@ -45,7 +45,7 @@ public class BookingController {
     @GetMapping("/owner")
     List<BookingDto> getOwnerBookingByState(
             @RequestHeader("X-Sharer-User-Id") long userId,
-            @RequestParam(required = false, defaultValue = "ALL") String state,
+            @RequestParam(required = false, defaultValue = "ALL") BookingFilterState state,
             @RequestParam(defaultValue = "0") int from,
             @RequestParam(defaultValue = "10") int size) {
         return bookingService.getOwnerBookingsByState(userId, state, new PaginationRequest(from, size));
